@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+    <head>
+        <title>Brian Dass – CS 4720, Final</title>
+        <link rel="stylesheet" type="text/css" href="final.css">
+        <script type="module" src="https://s.brightspace.com/lib/bsi/20.23.6-201/unbundled/mathjax.js"></script>
+        <script type="text/javascript">
+            document.addEventListener('DOMContentLoaded', function () {
+            if (document.querySelector('math') || /\$\$|\\\(|\\\[|\\begin{|\\ref{|\\eqref{/.test(document.body.innerHTML)) {
+                document.querySelectorAll('mspace[linebreak="newline"]').forEach(elm => {
+                    elm.setAttribute('style', 'display: block; height: 0.5rem;');
+                });
+
+                window.D2L.MathJax.loadMathJax({
+                    'outputScale': 1,
+                    'renderLatex': true
+                });
+            }
+        });
+        </script>
+        <script type="module" src="https://s.brightspace.com/lib/bsi/20.23.6-201/unbundled/prism.js"></script>
+        <script type="text/javascript">document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.d2l-code').forEach(code => {
+                window.D2L.Prism.formatCodeElement(code);
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <h1>Brian Dass – CS 4720, Final</h1>
+        <table>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
+        <p>Player X's turn</p>
+        <button onclick="resetGame()">New Game</button>
+        <script src="final.css"></script>
+        <script>
+            var currentPlayer = "X";
+            var table = document.querySelector('table');
+
+            function getWinner() {
+                var spaces = table.querySelectorAll('td');
+                var winningCombinations = [
+                    [0, 1, 2], [3, 4, 5], [6, 7, 8], 
+                    [0, 3, 6], [1, 4, 7], [2, 5, 8], 
+                    [0, 4, 8], [2, 4, 6] 
+                ];
+                for (var i = 0; i < winningCombinations.length; i++) {
+                    var [a, b, c] = winningCombinations[i];
+                    var spaceA = spaces[a].textContent;
+                    var spaceB = spaces[b].textContent;
+                    var spaceC = spaces[c].textContent;
+
+                    if (spaceA && spaceA === spaceB && spaceA === spaceC) {
+                        return spaceA;
+                    }
+                }
+                var isTie = Array.from(spaces).every(function (space) {
+                    return space.textContent !== "";
+                });
+                if (isTie) {
+                    return "C"; 
+                }
+                return "";
+            }
+
+            function clickSpace(event) {
+                var space = event.target;
+                if (space.textContent === "") {
+                    space.textContent = currentPlayer;
+
+                var winner = getWinner();
+                var resultParagraph = document.querySelector('p');
+
+                if (winner === "X" || winner === "O") {
+                    resultParagraph.textContent = "Player " + winner + " wins!";
+                    var spaces = table.querySelectorAll('td');
+                    for (var i = 0; i < spaces.length; i++) {
+                        if (spaces[i].textContent === winner) {
+                            spaces[i].classList.add('winner');
+                        }
+                    }
+                    table.removeEventListener('click', clickSpace);
+                    } else if (winner === "") {
+                        resultParagraph.textContent = "No winner yet. Keep playing!";
+                    } else if (winner === "C") {
+                        resultParagraph.textContent = "It's a tie!";
+                        table.removeEventListener('click', clickSpace);
+                    }
+                    currentPlayer = currentPlayer === "X" ? "O" : "X";
+                }
+            }
+
+            function resetGame() {
+                var spaces = table.querySelectorAll('td');
+                spaces.forEach(function (space) {
+                    space.textContent = "";
+                    space.classList.remove('winner');
+                });
+
+                var resultParagraph = document.querySelector('p');
+                resultParagraph.textContent = "Player X's turn";
+                currentPlayer = "X";
+                table.addEventListener('click', clickSpace);
+            }
+            table.addEventListener('click', clickSpace);
+        </script>
+    </body>
+</html>
